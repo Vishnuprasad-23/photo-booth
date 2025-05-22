@@ -1,15 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <!-- Google tag (gtag.js) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-5JYHTLKSXQ"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-
-    gtag('config', 'G-5JYHTLKSXQ');
-  </script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Photo Booth Studio</title>
@@ -17,9 +8,12 @@
   <link rel="stylesheet" href="styles.css" />
   <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;700&display=swap" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
-<body class="min-h-screen bg-ivory flex font-garamond">
+<body class="min-h-screen bg-ivory flex flex-col font-garamond">
   <!-- Sidebar for controls -->
   <div class="w-80 bg-navy text-ivory p-6 shadow-lg">
     <h2 class="text-2xl font-bold mb-6">Studio Settings</h2>
@@ -38,6 +32,8 @@
         <option value="2">2 Photos</option>
         <option value="3">3 Photos</option>
         <option value="4">4 Photos</option>
+        <option value="2x2">2x2 Grid (4 Photos)</option>
+        <option value="2x3">2x3 Grid (6 Photos)</option>
       </select>
     </div>
     
@@ -89,6 +85,16 @@
         class="w-full p-2 border border-gray-300 rounded-md bg-ivory text-navy focus:outline-none focus:ring-2 focus:ring-gold"
         placeholder="Enter text for photo strip"
       />
+    </div>
+    
+    <div class="mb-4">
+      <label class="block text-sm font-medium mb-1">Text Font</label>
+      <select id="text-font" class="w-full p-2 border border-gray-300 rounded-md bg-ivory text-navy focus:outline-none focus:ring-2 focus:ring-gold">
+        <option value="Caveat">Caveat</option>
+        <option value="Playfair Display">Playfair Display</option>
+        <option value="Cinzel">Cinzel</option>
+        <option value="Great Vibes">Great Vibes</option>
+      </select>
     </div>
     
     <div class="mb-4">
@@ -203,6 +209,14 @@
       </button>
     </div>
   </div>
+
+  <!-- Footer -->
+  <footer class="bg-navy text-ivory text-center py-4 mt-auto">
+    <p class="text-sm">
+      Created by Your Vishnu Prasad | 
+      <a href="https://github.com/Vishnuprasad-23" target="_blank" class="text-gold hover:underline">GitHub Profile</a>
+    </p>
+  </footer>
   
   <script src="utils.js"></script>
   <script src="script.js"></script>

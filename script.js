@@ -12,6 +12,7 @@ const timerSection = document.getElementById('timer-section');
 const filterSelect = document.getElementById('filter');
 const frameSelect = document.getElementById('frame');
 const textInput = document.getElementById('text-overlay');
+const textFontSelect = document.getElementById('text-font');
 const textColorPicker = document.getElementById('text-color');
 const textSizeSelect = document.getElementById('text-size');
 const textAlignmentSelect = document.getElementById('text-alignment');
@@ -94,7 +95,18 @@ function handleUpload(event) {
 
 function renderPhotoStrip() {
   photoStrip.innerHTML = '';
-  photoStrip.className = `flex gap-4 p-6 rounded-lg shadow-md border-2 border-gold relative max-w-3xl ${currentOrientation}`;
+  let layoutClass = currentOrientation;
+  if (layoutSelect.value === '2x2') {
+    layoutClass = 'grid-2x2';
+    currentLayout = 4;
+  } else if (layoutSelect.value === '2x3') {
+    layoutClass = 'grid-2x3';
+    currentLayout = 6;
+  } else {
+    currentLayout = Number(layoutSelect.value);
+  }
+
+  photoStrip.className = `flex gap-4 p-6 rounded-lg shadow-md border-2 border-gold relative max-w-3xl ${layoutClass}`;
   photoStrip.style.backgroundColor = bgColorPicker.value;
 
   photos.forEach((photo, index) => {
@@ -111,6 +123,7 @@ function renderPhotoStrip() {
     textDiv.style.color = textColorPicker.value;
     textDiv.style.fontSize = textSizeSelect.value;
     textDiv.style.textAlign = textAlignmentSelect.value;
+    textDiv.style.fontFamily = textFontSelect.value;
     photoStrip.appendChild(textDiv);
     downloadBtn.classList.remove('hidden');
   } else {
@@ -136,14 +149,33 @@ function downloadPhotoStrip() {
   const totalPhotoWidth = photoWidth + frameExtra.width;
   const totalPhotoHeight = photoHeight + frameExtra.height;
 
-  // Calculate canvas size
+  // Determine layout type and calculate canvas size
   let stripWidth, stripHeight;
-  if (currentOrientation === 'vertical') {
-    stripWidth = totalPhotoWidth + 24; // Extra padding for borders
-    stripHeight = (totalPhotoHeight + padding) * photos.length + (photos.length > 0 ? textHeight + padding : 0) + 24;
+  let isGrid = false;
+  let rows, cols;
+
+  if (layoutSelect.value === '2x2') {
+    currentLayout = 4;
+    cols = 2;
+    rows = 2;
+    stripWidth = (totalPhotoWidth + padding) * cols + 24;
+    stripHeight = (totalPhotoHeight + padding) * rows + (photos.length > 0 ? textHeight + padding : 0) + 24;
+    isGrid = true;
+  } else if (layoutSelect.value === '2x3') {
+    currentLayout = 6;
+    cols = 2;
+    rows = 3;
+    stripWidth = (totalPhotoWidth + padding) * cols + 24;
+    stripHeight = (totalPhotoHeight + padding) * rows + (photos.length > 0 ? textHeight + padding : 0) + 24;
+    isGrid = true;
   } else {
-    stripWidth = (totalPhotoWidth + padding) * photos.length + 24;
-    stripHeight = totalPhotoHeight + (photos.length > 0 ? textHeight + padding : 0) + 24;
+    if (currentOrientation === 'vertical') {
+      stripWidth = totalPhotoWidth + 24;
+      stripHeight = (totalPhotoHeight + padding) * photos.length + (photos.length > 0 ? textHeight + padding : 0) + 24;
+    } else {
+      stripWidth = (totalPhotoWidth + padding) * photos.length + 24;
+      stripHeight = totalPhotoHeight + (photos.length > 0 ? textHeight + padding : 0) + 24;
+    }
   }
 
   const stripCanvas = document.createElement('canvas');
@@ -167,10 +199,15 @@ function downloadPhotoStrip() {
       loadedImages++;
 
       // Calculate position
-      let xOffset = 12 + frameExtra.width / 2; // Start with canvas padding and adjust for frame
+      let xOffset = 12 + frameExtra.width / 2;
       let yOffset = 12 + frameExtra.height / 2;
 
-      if (currentOrientation === 'vertical') {
+      if (isGrid) {
+        const row = Math.floor(index / cols);
+        const col = index % cols;
+        xOffset += col * (totalPhotoWidth + padding);
+        yOffset += row * (totalPhotoHeight + padding);
+      } else if (currentOrientation === 'vertical') {
         yOffset += index * (totalPhotoHeight + padding);
       } else {
         xOffset += index * (totalPhotoWidth + padding);
@@ -224,16 +261,21 @@ function downloadPhotoStrip() {
 
       // Draw text overlay after all images are loaded
       if (loadedImages === totalImages && photos.length > 0) {
-        const textY = currentOrientation === 'vertical'
-          ? 12 + (totalPhotoHeight + padding) * photos.length
-          : 12 + totalPhotoHeight + padding;
+        let textY;
+        if (isGrid) {
+          textY = 12 + (totalPhotoHeight + padding) * rows + padding;
+        } else {
+          textY = currentOrientation === 'vertical'
+            ? 12 + (totalPhotoHeight + padding) * photos.length
+            : 12 + totalPhotoHeight + padding;
+        }
 
         // Draw text background
         ctx.fillStyle = '#f8f1e9';
         ctx.fillRect(12, textY, stripWidth - 24, textHeight);
 
         // Draw text
-        ctx.font = `${textSizeSelect.value} Caveat`;
+        ctx.font = `${textSizeSelect.value} "${textFontSelect.value}"`;
         ctx.fillStyle = textColorPicker.value;
         ctx.textAlign = textAlignmentSelect.value;
         ctx.textBaseline = 'middle';
@@ -328,7 +370,13 @@ modeSelect.addEventListener('change', () => {
 });
 
 layoutSelect.addEventListener('change', () => {
-  currentLayout = Number(layoutSelect.value);
+  if (layoutSelect.value === '2x2') {
+    currentLayout = 4;
+  } else if (layoutSelect.value === '2x3') {
+    currentLayout = 6;
+  } else {
+    currentLayout = Number(layoutSelect.value);
+  }
   photos = photos.slice(0, currentLayout);
   historyManager = new HistoryManager();
   historyManager.addState(photos);
@@ -367,6 +415,7 @@ frameSelect.addEventListener('change', () => {
 });
 
 textInput.addEventListener('input', renderPhotoStrip);
+textFontSelect.addEventListener('change', renderPhotoStrip);
 textColorPicker.addEventListener('input', renderPhotoStrip);
 textSizeSelect.addEventListener('change', renderPhotoStrip);
 textAlignmentSelect.addEventListener('change', renderPhotoStrip);
