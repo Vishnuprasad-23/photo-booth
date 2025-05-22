@@ -132,6 +132,11 @@ function renderPhotoStrip() {
 }
 
 function downloadPhotoStrip() {
+  if (photos.length === 0) {
+    showFeedback('No photos to download', feedback);
+    return;
+  }
+
   // Determine photo dimensions based on screen size
   const screenWidth = window.innerWidth;
   let photoWidth, photoHeight;
@@ -146,7 +151,7 @@ function downloadPhotoStrip() {
     photoHeight = 150;
   }
 
-  const padding = screenWidth <= 768 ? 8 : 16; // Matches CSS gap-4 (4 * 4px) or reduced for mobile
+  const padding = screenWidth <= 768 ? 8 : 16;
   const textHeight = screenWidth <= 768 ? 30 : 50;
 
   // Frame dimensions (including borders)
@@ -167,7 +172,7 @@ function downloadPhotoStrip() {
 
   if (layoutSelect.value === '2x2') {
     currentLayout = 4;
-    cols = screenWidth <= 480 ? 1 : 2; // Stack vertically on very small screens
+    cols = screenWidth <= 480 ? 1 : 2;
     rows = screenWidth <= 480 ? 4 : 2;
     stripWidth = (totalPhotoWidth + padding) * (screenWidth <= 480 ? 1 : 2) + 24;
     stripHeight = (totalPhotoHeight + padding) * (screenWidth <= 480 ? 4 : 2) + (photos.length > 0 ? textHeight + padding : 0) + 24;
@@ -251,7 +256,12 @@ function downloadPhotoStrip() {
       }
 
       // Draw the image
-      ctx.drawImage(img, xOffset, yOffset, photoWidth, photoHeight);
+      try {
+        ctx.drawImage(img, xOffset, yOffset, photoWidth, photoHeight);
+      } catch (error) {
+        console.error('Error drawing image on canvas:', error);
+        showFeedback('Error drawing image, download may be incomplete', feedback);
+      }
 
       // Draw frame borders
       if (photo.frame === 'gold') {
@@ -271,7 +281,7 @@ function downloadPhotoStrip() {
       }
 
       // Draw text overlay after all images are loaded
-      if (loadedImages === totalImages && regardant.length > 0) {
+      if (loadedImages === totalImages && photos.length > 0) {
         let textY;
         if (isGrid) {
           textY = 12 + (totalPhotoHeight + padding) * rows + padding;
@@ -296,11 +306,16 @@ function downloadPhotoStrip() {
         ctx.fillText(textInput.value || 'Your Text Here', textX, textY + textHeight / 2);
 
         // Download the canvas
-        const link = document.createElement('a');
-        link.download = 'photo-strip.png';
-        link.href = stripCanvas.toDataURL('image/png');
-        link.click();
-        showFeedback('Photo strip downloaded', feedback);
+        try {
+          const link = document.createElement('a');
+          link.download = 'photo-strip.png';
+          link.href = stripCanvas.toDataURL('image/png');
+          link.click();
+          showFeedback('Photo strip downloaded', feedback);
+        } catch (error) {
+          console.error('Error generating download link:', error);
+          showFeedback('Error downloading photo strip', feedback);
+        }
       }
     };
     img.onerror = () => {
