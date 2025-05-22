@@ -17,6 +17,10 @@ body {
   display: none;
 }
 
+#video {
+  transform: scaleX(-1); /* Unflip the video feed */
+}
+
 .photo {
   width: 200px;
   height: 150px;
@@ -31,16 +35,25 @@ body {
   border-bottom-width: 20px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   background: #ffffff;
+  width: 200px; /* Ensure consistent width */
+  height: 150px;
+  box-sizing: content-box; /* Prevent border from affecting dimensions */
 }
 
 .photo.frame-gold {
   border: 5px solid #d4a017;
   border-radius: 0.5rem;
+  width: 200px;
+  height: 150px;
+  box-sizing: content-box;
 }
 
 .photo.frame-dotted {
   border: 3px dotted #1a2a44;
   border-radius: 0.25rem;
+  width: 200px;
+  height: 150px;
+  box-sizing: content-box;
 }
 
 .text-overlay {
