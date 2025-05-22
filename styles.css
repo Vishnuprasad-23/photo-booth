@@ -1,0 +1,89 @@
+@font-face {
+  font-family: 'EB Garamond';
+  src: url('https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;700&display=swap');
+}
+
+@font-face {
+  font-family: 'Caveat';
+  src: url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&display=swap');
+}
+
+body {
+  font-family: 'EB Garamond', serif;
+  background-image: linear-gradient(to bottom, #f8f1e9, #e0d8c3);
+}
+
+.hidden {
+  display: none;
+}
+
+.photo {
+  width: 200px;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 0.25rem;
+  border: 2px solid #d4a017;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.photo.frame-polaroid {
+  border: 10px solid #ffffff;
+  border-bottom-width: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  background: #ffffff;
+}
+
+.photo.frame-gold {
+  border: 5px solid #d4a017;
+  border-radius: 0.5rem;
+}
+
+.photo.frame-dotted {
+  border: 3px dotted #1a2a44;
+  border-radius: 0.25rem;
+}
+
+.text-overlay {
+  background-color: #f8f1e9;
+  color: #1a2a44; /* Default, will be overridden by text-color */
+  text-align: center; /* Default, will be overridden by text-alignment */
+  padding: 0.5rem;
+  font-family: 'Caveat', cursive;
+  font-size: 1.5rem; /* Default, will be overridden by text-size */
+  font-weight: 700;
+  border-radius: 0.25rem;
+  margin-top: 1rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+#photo-strip {
+  background-color: #f8f1e9; /* Default background */
+}
+
+#photo-strip.vertical {
+  flex-direction: column;
+  align-items: center;
+}
+
+#photo-strip.horizontal {
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+#photo-strip.horizontal .photo {
+  flex: 0 0 auto;
+}
+
+#photo-strip.horizontal .text-overlay {
+  flex: 0 0 100%;
+}
+
+.glow-effect {
+  box-shadow: 0 0 10px rgba(232, 185, 35, 0.5);
+}
+
+.bg-navy-dark {
+  background-color: #152238; /* Slightly darker navy for hover */
+}
