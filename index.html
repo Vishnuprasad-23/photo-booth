@@ -13,208 +13,211 @@
   <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
-<body class="min-h-screen bg-ivory flex flex-col font-garamond">
-  <!-- Sidebar for controls -->
-  <div class="w-80 bg-navy text-ivory p-6 shadow-lg">
-    <h2 class="text-2xl font-bold mb-6">Studio Settings</h2>
-    
-    <div class="mb-4">
-      <label class="block text-sm font-medium mb-1">Mode</label>
-      <select id="mode" class="w-full p-2 border border-gray-300 rounded-md bg-ivory text-navy focus:outline-none focus:ring-2 focus:ring-gold">
-        <option value="capture">Capture</option>
-        <option value="upload">Upload</option>
-      </select>
-    </div>
-    
-    <div class="mb-4">
-      <label class="block text-sm font-medium mb-1">Layout</label>
-      <select id="layout" class="w-full p-2 border border-gray-300 rounded-md bg-ivory text-navy focus:outline-none focus:ring-2 focus:ring-gold">
-        <option value="2">2 Photos</option>
-        <option value="3">3 Photos</option>
-        <option value="4">4 Photos</option>
-        <option value="2x2">2x2 Grid (4 Photos)</option>
-        <option value="2x3">2x3 Grid (6 Photos)</option>
-      </select>
-    </div>
-    
-    <div class="mb-4">
-      <label class="block text-sm font-medium mb-1">Orientation</label>
-      <select id="orientation" class="w-full p-2 border border-gray-300 rounded-md bg-ivory text-navy focus:outline-none focus:ring-2 focus:ring-gold">
-        <option value="vertical">Vertical</option>
-        <option value="horizontal">Horizontal</option>
-      </select>
-    </div>
-    
-    <div id="timer-section" class="mb-4">
-      <label class="block text-sm font-medium mb-1">Timer (Capture Mode)</label>
-      <select id="timer" class="w-full p-2 border border-gray-300 rounded-md bg-ivory text-navy focus:outline-none focus:ring-2 focus:ring-gold">
-        <option value="0">None</option>
-        <option value="3">3 Seconds</option>
-        <option value="5">5 Seconds</option>
-        <option value="10">10 Seconds</option>
-      </select>
-    </div>
-    
-    <div class="mb-4">
-      <label class="block text-sm font-medium mb-1">Filter</label>
-      <select id="filter" class="w-full p-2 border border-gray-300 rounded-md bg-ivory text-navy focus:outline-none focus:ring-2 focus:ring-gold">
-        <option value="none">None</option>
-        <option value="sepia(0.8)">Vintage</option>
-        <option value="grayscale(1)">Black & White</option>
-        <option value="brightness(1.3) contrast(1.2)">Bright</option>
-        <option value="blur(2px)">Dreamy</option>
-        <option value="contrast(1.4)">Vivid</option>
-      </select>
-    </div>
-    
-    <div class="mb-4">
-      <label class="block text-sm font-medium mb-1">Photo Frame</label>
-      <select id="frame" class="w-full p-2 border border-gray-300 rounded-md bg-ivory text-navy focus:outline-none focus:ring-2 focus:ring-gold">
-        <option value="none">None</option>
-        <option value="polaroid">Polaroid</option>
-        <option value="gold">Gold Border</option>
-        <option value="dotted">Dotted</option>
-      </select>
-    </div>
-    
-    <div class="mb-4">
-      <label class="block text-sm font-medium mb-1">Text Overlay</label>
-      <input
-        type="text"
-        id="text-overlay"
-        class="w-full p-2 border border-gray-300 rounded-md bg-ivory text-navy focus:outline-none focus:ring-2 focus:ring-gold"
-        placeholder="Enter text for photo strip"
-      />
-    </div>
-    
-    <div class="mb-4">
-      <label class="block text-sm font-medium mb-1">Text Font</label>
-      <select id="text-font" class="w-full p-2 border border-gray-300 rounded-md bg-ivory text-navy focus:outline-none focus:ring-2 focus:ring-gold">
-        <option value="Caveat">Caveat</option>
-        <option value="Playfair Display">Playfair Display</option>
-        <option value="Cinzel">Cinzel</option>
-        <option value="Great Vibes">Great Vibes</option>
-      </select>
-    </div>
-    
-    <div class="mb-4">
-      <label class="block text-sm font-medium mb-1">Text Color</label>
-      <input
-        type="color"
-        id="text-color"
-        value="#1a2a44"
-        class="w-12 h-12 p-1 border border-gray-300 rounded-md"
-      />
-    </div>
-    
-    <div class="mb-4">
-      <label class="block text-sm font-medium mb-1">Text Size</label>
-      <select id="text-size" class="w-full p-2 border border-gray-300 rounded-md bg-ivory text-navy focus:outline-none focus:ring-2 focus:ring-gold">
-        <option value="1rem">Small</option>
-        <option value="1.5rem" selected>Medium</option>
-        <option value="2rem">Large</option>
-      </select>
-    </div>
-    
-    <div class="mb-4">
-      <label class="block text-sm font-medium mb-1">Text Alignment</label>
-      <select id="text-alignment" class="w-full p-2 border border-gray-300 rounded-md bg-ivory text-navy focus:outline-none focus:ring-2 focus:ring-gold">
-        <option value="left">Left</option>
-        <option value="center" selected>Center</option>
-        <option value="right">Right</option>
-      </select>
-    </div>
-    
-    <div class="mb-4">
-      <label class="block text-sm font-medium mb-1">Background Color</label>
-      <div class="flex space-x-2">
-        <input
-          type="color"
-          id="bg-color-picker"
-          value="#f8f1e9"
-          class="w-12 h-12 p-1 border border-gray-300 rounded-md"
-        />
-        <select id="bg-color-select" class="flex-1 p-2 border border-gray-300 rounded-md bg-ivory text-navy focus:outline-none focus:ring-2 focus:ring-gold">
-          <option value="#f8f1e9">Ivory</option>
-          <option value="#1a2a44">Navy</option>
-          <option value="#d4a017">Gold</option>
-          <option value="#333333">Charcoal</option>
-          <option value="#8a9a5b">Sage</option>
+<body class="min-h-screen flex flex-col font-garamond">
+  <!-- Main content wrapper -->
+  <div class="flex flex-1">
+    <!-- Sidebar for controls -->
+    <div class="w-80 bg-navy text-ivory p-6 shadow-lg">
+      <h2 class="text-2xl font-bold mb-6">Studio Settings</h2>
+      
+      <div class="mb-4">
+        <label class="block text-sm font-medium mb-1">Mode</label>
+        <select id="mode" class="w-full p-2 border border-gray-300 rounded-md bg-ivory text-navy focus:outline-none focus:ring-2 focus:ring-gold">
+          <option value="capture">Capture</option>
+          <option value="upload">Upload</option>
         </select>
       </div>
-    </div>
-  </div>
-  
-  <!-- Main content area -->
-  <div class="flex-1 p-6">
-    <h1 class="text-4xl font-bold text-navy mb-6 text-center">Photo Booth Studio</h1>
-    
-    <div id="feedback" class="text-center text-navy mb-4 hidden"></div>
-    <div id="timer-countdown" class="text-center text-navy text-3xl font-bold mb-4 hidden"></div>
-    
-    <div id="capture-section" class="mb-6 flex justify-center">
-      <div>
-        <video id="video" autoplay class="w-full max-w-md rounded-lg border-2 border-gold"></video>
-        <canvas id="canvas" class="hidden"></canvas>
-        <button
-          id="capture-btn"
-          class="mt-6 px-10 py-5 bg-bright-gold text-navy rounded-lg hover:bg-gold-dark transition-all duration-300 shadow-lg text-xl font-bold w-full glow-effect disabled:opacity-50"
-        >
-          Capture Photo
-        </button>
+      
+      <div class="mb-4">
+        <label class="block text-sm font-medium mb-1">Layout</label>
+        <select id="layout" class="w-full p-2 border border-gray-300 rounded-md bg-ivory text-navy focus:outline-none focus:ring-2 focus:ring-gold">
+          <option value="2">2 Photos</option>
+          <option value="3">3 Photos</option>
+          <option value="4">4 Photos</option>
+          <option value="2x2">2x2 Grid (4 Photos)</option>
+          <option value="2x3">2x3 Grid (6 Photos)</option>
+        </select>
       </div>
-    </div>
-    
-    <div id="upload-section" class="mb-6 flex justify-center hidden">
-      <div>
+      
+      <div class="mb-4">
+        <label class="block text-sm font-medium mb-1">Orientation</label>
+        <select id="orientation" class="w-full p-2 border border-gray-300 rounded-md bg-ivory text-navy focus:outline-none focus:ring-2 focus:ring-gold">
+          <option value="vertical">Vertical</option>
+          <option value="horizontal">Horizontal</option>
+        </select>
+      </div>
+      
+      <div id="timer-section" class="mb-4">
+        <label class="block text-sm font-medium mb-1">Timer (Capture Mode)</label>
+        <select id="timer" class="w-full p-2 border border-gray-300 rounded-md bg-ivory text-navy focus:outline-none focus:ring-2 focus:ring-gold">
+          <option value="0">None</option>
+          <option value="3">3 Seconds</option>
+          <option value="5">5 Seconds</option>
+          <option value="10">10 Seconds</option>
+        </select>
+      </div>
+      
+      <div class="mb-4">
+        <label class="block text-sm font-medium mb-1">Filter</label>
+        <select id="filter" class="w-full p-2 border border-gray-300 rounded-md bg-ivory text-navy focus:outline-none focus:ring-2 focus:ring-gold">
+          <option value="none">None</option>
+          <option value="sepia(0.8)">Vintage</option>
+          <option value="grayscale(1)">Black & White</option>
+          <option value="brightness(1.3) contrast(1.2)">Bright</option>
+          <option value="blur(2px)">Dreamy</option>
+          <option value="contrast(1.4)">Vivid</option>
+        </select>
+      </div>
+      
+      <div class="mb-4">
+        <label class="block text-sm font-medium mb-1">Photo Frame</label>
+        <select id="frame" class="w-full p-2 border border-gray-300 rounded-md bg-ivory text-navy focus:outline-none focus:ring-2 focus:ring-gold">
+          <option value="none">None</option>
+          <option value="polaroid">Polaroid</option>
+          <option value="gold">Gold Border</option>
+          <option value="dotted">Dotted</option>
+        </select>
+      </div>
+      
+      <div class="mb-4">
+        <label class="block text-sm font-medium mb-1">Text Overlay</label>
         <input
-          type="file"
-          id="upload-input"
-          accept="image/*"
-          class="p-2 border border-gray-300 rounded-md bg-ivory text-navy w-full max-w-md"
+          type="text"
+          id="text-overlay"
+          class="w-full p-2 border border-gray-300 rounded-md bg-ivory text-navy focus:outline-none focus:ring-2 focus:ring-gold"
+          placeholder="Enter text for photo strip"
         />
-        <button
-          id="upload-btn"
-          class="mt-6 px-10 py-5 bg-bright-gold text-navy rounded-lg hover:bg-gold-dark transition-all duration-300 shadow-lg text-xl font-bold w-full glow-effect disabled:opacity-50"
-        >
-          Upload Photo
-        </button>
+      </div>
+      
+      <div class="mb-4">
+        <label class="block text-sm font-medium mb-1">Text Font</label>
+        <select id="text-font" class="w-full p-2 border border-gray-300 rounded-md bg-ivory text-navy focus:outline-none focus:ring-2 focus:ring-gold">
+          <option value="Caveat">Caveat</option>
+          <option value="Playfair Display">Playfair Display</option>
+          <option value="Cinzel">Cinzel</option>
+          <option value="Great Vibes">Great Vibes</option>
+        </select>
+      </div>
+      
+      <div class="mb-4">
+        <label class="block text-sm font-medium mb-1">Text Color</label>
+        <input
+          type="color"
+          id="text-color"
+          value="#1a2a44"
+          class="w-12 h-12 p-1 border border-gray-300 rounded-md"
+        />
+      </div>
+      
+      <div class="mb-4">
+        <label class="block text-sm font-medium mb-1">Text Size</label>
+        <select id="text-size" class="w-full p-2 border border-gray-300 rounded-md bg-ivory text-navy focus:outline-none focus:ring-2 focus:ring-gold">
+          <option value="1rem">Small</option>
+          <option value="1.5rem" selected>Medium</option>
+          <option value="2rem">Large</option>
+        </select>
+      </div>
+      
+      <div class="mb-4">
+        <label class="block text-sm font-medium mb-1">Text Alignment</label>
+        <select id="text-alignment" class="w-full p-2 border border-gray-300 rounded-md bg-ivory text-navy focus:outline-none focus:ring-2 focus:ring-gold">
+          <option value="left">Left</option>
+          <option value="center" selected>Center</option>
+          <option value="right">Right</option>
+        </select>
+      </div>
+      
+      <div class="mb-4">
+        <label class="block text-sm font-medium mb-1">Background Color</label>
+        <div class="flex space-x-2">
+          <input
+            type="color"
+            id="bg-color-picker"
+            value="#f8f1e9"
+            class="w-12 h-12 p-1 border border-gray-300 rounded-md"
+          />
+          <select id="bg-color-select" class="flex-1 p-2 border border-gray-300 rounded-md bg-ivory text-navy focus:outline-none focus:ring-2 focus:ring-gold">
+            <option value="#f8f1e9">Ivory</option>
+            <option value="#1a2a44">Navy</option>
+            <option value="#d4a017">Gold</option>
+            <option value="#333333">Charcoal</option>
+            <option value="#8a9a5b">Sage</option>
+          </select>
+        </div>
       </div>
     </div>
     
-    <div class="flex justify-center">
-      <div id="photo-strip" class="flex gap-4 p-6 rounded-lg shadow-md border-2 border-gold relative max-w-3xl"></div>
-    </div>
-    
-    <div class="flex justify-center mt-4 space-x-4">
-      <button
-        id="undo-btn"
-        class="px-6 py-3 bg-navy text-ivory rounded-lg hover:bg-navy-dark transition-all duration-300 shadow-lg text-lg font-bold disabled:opacity-50"
-        disabled
-      >
-        Undo
-      </button>
-      <button
-        id="redo-btn"
-        class="px-6 py-3 bg-navy text-ivory rounded-lg hover:bg-navy-dark transition-all duration-300 shadow-lg text-lg font-bold disabled:opacity-50"
-        disabled
-      >
-        Redo
-      </button>
-      <button
-        id="download-btn"
-        class="px-10 py-5 bg-bright-gold text-navy rounded-lg hover:bg-gold-dark transition-all duration-300 shadow-lg text-xl font-bold hidden glow-effect"
-      >
-        Download Photo Strip
-      </button>
+    <!-- Main content area -->
+    <div class="flex-1 p-6 overflow-auto">
+      <h1 class="text-4xl font-bold text-navy mb-6 text-center">Photo Booth Studio</h1>
+      
+      <div id="feedback" class="text-center text-navy mb-4 hidden"></div>
+      <div id="timer-countdown" class="text-center text-navy text-3xl font-bold mb-4 hidden"></div>
+      
+      <div id="capture-section" class="mb-6 flex justify-center">
+        <div>
+          <video id="video" autoplay class="w-full max-w-md rounded-lg border-2 border-gold"></video>
+          <canvas id="canvas" class="hidden"></canvas>
+          <button
+            id="capture-btn"
+            class="mt-6 px-10 py-5 bg-bright-gold text-navy rounded-lg hover:bg-gold-dark transition-all duration-300 shadow-lg text-xl font-bold w-full glow-effect disabled:opacity-50"
+          >
+            Capture Photo
+          </button>
+        </div>
+      </div>
+      
+      <div id="upload-section" class="mb-6 flex justify-center hidden">
+        <div>
+          <input
+            type="file"
+            id="upload-input"
+            accept="image/*"
+            class="p-2 border border-gray-300 rounded-md bg-ivory text-navy w-full max-w-md"
+          />
+          <button
+            id="upload-btn"
+            class="mt-6 px-10 py-5 bg-bright-gold text-navy rounded-lg hover:bg-gold-dark transition-all duration-300 shadow-lg text-xl font-bold w-full glow-effect disabled:opacity-50"
+          >
+            Upload Photo
+          </button>
+        </div>
+      </div>
+      
+      <div class="flex justify-center">
+        <div id="photo-strip" class="flex gap-4 p-6 rounded-lg shadow-md border-2 border-gold relative max-w-3xl"></div>
+      </div>
+      
+      <div class="flex justify-center mt-4 space-x-4">
+        <button
+          id="undo-btn"
+          class="px-6 py-3 bg-navy text-ivory rounded-lg hover:bg-navy-dark transition-all duration-300 shadow-lg text-lg font-bold disabled:opacity-50"
+          disabled
+        >
+          Undo
+        </button>
+        <button
+          id="redo-btn"
+          class="px-6 py-3 bg-navy text-ivory rounded-lg hover:bg-navy-dark transition-all duration-300 shadow-lg text-lg font-bold disabled:opacity-50"
+          disabled
+        >
+          Redo
+        </button>
+        <button
+          id="download-btn"
+          class="px-10 py-5 bg-bright-gold text-navy rounded-lg hover:bg-gold-dark transition-all duration-300 shadow-lg text-xl font-bold hidden glow-effect"
+        >
+          Download Photo Strip
+        </button>
+      </div>
     </div>
   </div>
 
   <!-- Footer -->
-  <footer class="bg-navy text-ivory text-center py-4 mt-auto">
+  <footer class="bg-navy text-ivory text-center py-4">
     <p class="text-sm">
-      Created by Your Vishnu Prasad | 
-      <a href="https://github.com/Vishnuprasad-23" target="_blank" class="text-gold hover:underline">GitHub Profile</a>
+      Created by Your Name | 
+      <a href="https://github.com/yourusername" target="_blank" class="text-gold hover:underline">GitHub Profile</a>
     </p>
   </footer>
   
