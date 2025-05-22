@@ -132,18 +132,29 @@ function renderPhotoStrip() {
 }
 
 function downloadPhotoStrip() {
-  // Define dimensions
-  const photoWidth = 200;
-  const photoHeight = 150;
-  const padding = 16; // Matches CSS gap-4 (4 * 4px)
-  const textHeight = 50;
+  // Determine photo dimensions based on screen size
+  const screenWidth = window.innerWidth;
+  let photoWidth, photoHeight;
+  if (screenWidth <= 480) {
+    photoWidth = 120;
+    photoHeight = 90;
+  } else if (screenWidth <= 768) {
+    photoWidth = 150;
+    photoHeight = 112.5;
+  } else {
+    photoWidth = 200;
+    photoHeight = 150;
+  }
+
+  const padding = screenWidth <= 768 ? 8 : 16; // Matches CSS gap-4 (4 * 4px) or reduced for mobile
+  const textHeight = screenWidth <= 768 ? 30 : 50;
 
   // Frame dimensions (including borders)
   const framePadding = {
-    none: { width: 4, height: 4 }, // Default border
-    polaroid: { width: 20, height: 40 }, // 10px sides/top, 20px bottom
-    gold: { width: 10, height: 10 }, // 5px border
-    dotted: { width: 6, height: 6 } // 3px border
+    none: { width: screenWidth <= 480 ? 2 : screenWidth <= 768 ? 4 : 4, height: screenWidth <= 480 ? 2 : screenWidth <= 768 ? 4 : 4 },
+    polaroid: { width: screenWidth <= 480 ? 8 : screenWidth <= 768 ? 10 : 20, height: screenWidth <= 480 ? 16 : screenWidth <= 768 ? 20 : 40 },
+    gold: { width: screenWidth <= 480 ? 4 : screenWidth <= 768 ? 6 : 10, height: screenWidth <= 480 ? 4 : screenWidth <= 768 ? 6 : 10 },
+    dotted: { width: screenWidth <= 480 ? 2 : screenWidth <= 768 ? 4 : 6, height: screenWidth <= 480 ? 2 : screenWidth <= 768 ? 4 : 6 }
   };
   const frameExtra = framePadding[currentFrame];
   const totalPhotoWidth = photoWidth + frameExtra.width;
@@ -156,17 +167,17 @@ function downloadPhotoStrip() {
 
   if (layoutSelect.value === '2x2') {
     currentLayout = 4;
-    cols = 2;
-    rows = 2;
-    stripWidth = (totalPhotoWidth + padding) * cols + 24;
-    stripHeight = (totalPhotoHeight + padding) * rows + (photos.length > 0 ? textHeight + padding : 0) + 24;
+    cols = screenWidth <= 480 ? 1 : 2; // Stack vertically on very small screens
+    rows = screenWidth <= 480 ? 4 : 2;
+    stripWidth = (totalPhotoWidth + padding) * (screenWidth <= 480 ? 1 : 2) + 24;
+    stripHeight = (totalPhotoHeight + padding) * (screenWidth <= 480 ? 4 : 2) + (photos.length > 0 ? textHeight + padding : 0) + 24;
     isGrid = true;
   } else if (layoutSelect.value === '2x3') {
     currentLayout = 6;
-    cols = 2;
-    rows = 3;
-    stripWidth = (totalPhotoWidth + padding) * cols + 24;
-    stripHeight = (totalPhotoHeight + padding) * rows + (photos.length > 0 ? textHeight + padding : 0) + 24;
+    cols = screenWidth <= 480 ? 1 : 2;
+    rows = screenWidth <= 480 ? 6 : 3;
+    stripWidth = (totalPhotoWidth + padding) * (screenWidth <= 480 ? 1 : 2) + 24;
+    stripHeight = (totalPhotoHeight + padding) * (screenWidth <= 480 ? 6 : 3) + (photos.length > 0 ? textHeight + padding : 0) + 24;
     isGrid = true;
   } else {
     if (currentOrientation === 'vertical') {
@@ -217,10 +228,10 @@ function downloadPhotoStrip() {
       if (photo.frame === 'polaroid') {
         ctx.fillStyle = '#ffffff';
         ctx.fillRect(
-          xOffset - 10,
-          yOffset - 10,
-          photoWidth + 20,
-          photoHeight + 40
+          xOffset - (frameExtra.width / 2),
+          yOffset - (frameExtra.height / 4),
+          photoWidth + frameExtra.width,
+          photoHeight + frameExtra.height
         );
         // Add shadow
         ctx.shadowColor = 'rgba(0, 0, 0, 0.2)';
@@ -228,10 +239,10 @@ function downloadPhotoStrip() {
         ctx.shadowOffsetX = 4;
         ctx.shadowOffsetY = 4;
         ctx.fillRect(
-          xOffset - 10,
-          yOffset - 10,
-          photoWidth + 20,
-          photoHeight + 40
+          xOffset - (frameExtra.width / 2),
+          yOffset - (frameExtra.height / 4),
+          photoWidth + frameExtra.width,
+          photoHeight + frameExtra.height
         );
         ctx.shadowColor = 'rgba(0, 0, 0, 0)';
         ctx.shadowBlur = 0;
@@ -245,22 +256,22 @@ function downloadPhotoStrip() {
       // Draw frame borders
       if (photo.frame === 'gold') {
         ctx.strokeStyle = '#d4a017';
-        ctx.lineWidth = 5;
-        ctx.strokeRect(xOffset - 2.5, yOffset - 2.5, photoWidth + 5, photoHeight + 5);
+        ctx.lineWidth = frameExtra.width / 2;
+        ctx.strokeRect(xOffset - (frameExtra.width / 4), yOffset - (frameExtra.height / 4), photoWidth + (frameExtra.width / 2), photoHeight + (frameExtra.height / 2));
       } else if (photo.frame === 'dotted') {
         ctx.strokeStyle = '#1a2a44';
-        ctx.lineWidth = 3;
+        ctx.lineWidth = frameExtra.width / 2;
         ctx.setLineDash([5, 5]);
-        ctx.strokeRect(xOffset - 1.5, yOffset - 1.5, photoWidth + 3, photoHeight + 3);
+        ctx.strokeRect(xOffset - (frameExtra.width / 4), yOffset - (frameExtra.height / 4), photoWidth + (frameExtra.width / 2), photoHeight + (frameExtra.height / 2));
         ctx.setLineDash([]);
       } else if (photo.frame === 'none') {
         ctx.strokeStyle = '#d4a017';
-        ctx.lineWidth = 2;
-        ctx.strokeRect(xOffset - 1, yOffset - 1, photoWidth + 2, photoHeight + 2);
+        ctx.lineWidth = frameExtra.width / 2;
+        ctx.strokeRect(xOffset - (frameExtra.width / 4), yOffset - (frameExtra.height / 4), photoWidth + (frameExtra.width / 2), photoHeight + (frameExtra.height / 2));
       }
 
       // Draw text overlay after all images are loaded
-      if (loadedImages === totalImages && photos.length > 0) {
+      if (loadedImages === totalImages && regardant.length > 0) {
         let textY;
         if (isGrid) {
           textY = 12 + (totalPhotoHeight + padding) * rows + padding;
@@ -275,7 +286,8 @@ function downloadPhotoStrip() {
         ctx.fillRect(12, textY, stripWidth - 24, textHeight);
 
         // Draw text
-        ctx.font = `${textSizeSelect.value} "${textFontSelect.value}"`;
+        const fontSize = screenWidth <= 768 ? '0.875rem' : textSizeSelect.value;
+        ctx.font = `${fontSize} "${textFontSelect.value}"`;
         ctx.fillStyle = textColorPicker.value;
         ctx.textAlign = textAlignmentSelect.value;
         ctx.textBaseline = 'middle';
