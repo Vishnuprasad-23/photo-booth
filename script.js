@@ -155,11 +155,6 @@ function downloadPhotoStrip() {
   ctx.fillStyle = bgColorPicker.value;
   ctx.fillRect(0, 0, stripWidth, stripHeight);
 
-  // Draw border (similar to the on-screen strip)
-  ctx.strokeStyle = '#d4a017';
-  ctx.lineWidth = 2;
-  ctx.strokeRect(12, 12, stripWidth - 24, stripHeight - 24);
-
   // Load and draw images
   let loadedImages = 0;
   const totalImages = photos.length;
