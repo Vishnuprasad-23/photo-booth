@@ -119,21 +119,31 @@ function renderPhotoStrip() {
 }
 
 function downloadPhotoStrip() {
-  // Calculate dimensions
+  // Define dimensions
   const photoWidth = 200;
   const photoHeight = 150;
-  const frameExtraWidth = currentFrame === 'polaroid' ? 20 : currentFrame === 'gold' ? 10 : currentFrame === 'dotted' ? 6 : 4;
-  const frameExtraHeight = currentFrame === 'polaroid' ? 40 : currentFrame === 'gold' ? 10 : currentFrame === 'dotted' ? 6 : 4;
+  const padding = 16; // Matches CSS gap-4 (4 * 4px)
   const textHeight = 50;
-  const padding = 16;
 
+  // Frame dimensions (including borders)
+  const framePadding = {
+    none: { width: 4, height: 4 }, // Default border
+    polaroid: { width: 20, height: 40 }, // 10px sides/top, 20px bottom
+    gold: { width: 10, height: 10 }, // 5px border
+    dotted: { width: 6, height: 6 } // 3px border
+  };
+  const frameExtra = framePadding[currentFrame];
+  const totalPhotoWidth = photoWidth + frameExtra.width;
+  const totalPhotoHeight = photoHeight + frameExtra.height;
+
+  // Calculate canvas size
   let stripWidth, stripHeight;
   if (currentOrientation === 'vertical') {
-    stripWidth = photoWidth + frameExtraWidth;
-    stripHeight = (photoHeight + frameExtraHeight) * photos.length + (photos.length - 1) * padding + (photos.length > 0 ? textHeight + padding : 0);
+    stripWidth = totalPhotoWidth + 24; // Extra padding for borders
+    stripHeight = (totalPhotoHeight + padding) * photos.length + (photos.length > 0 ? textHeight + padding : 0) + 24;
   } else {
-    stripWidth = (photoWidth + frameExtraWidth) * photos.length + (photos.length - 1) * padding;
-    stripHeight = photoHeight + frameExtraHeight + (photos.length > 0 ? textHeight + padding : 0);
+    stripWidth = (totalPhotoWidth + padding) * photos.length + 24;
+    stripHeight = totalPhotoHeight + (photos.length > 0 ? textHeight + padding : 0) + 24;
   }
 
   const stripCanvas = document.createElement('canvas');
@@ -141,11 +151,16 @@ function downloadPhotoStrip() {
   stripCanvas.height = stripHeight;
   const ctx = stripCanvas.getContext('2d');
 
-  // Set background color
+  // Set background
   ctx.fillStyle = bgColorPicker.value;
   ctx.fillRect(0, 0, stripWidth, stripHeight);
 
-  // Load all images and draw them
+  // Draw border (similar to the on-screen strip)
+  ctx.strokeStyle = '#d4a017';
+  ctx.lineWidth = 2;
+  ctx.strokeRect(12, 12, stripWidth - 24, stripHeight - 24);
+
+  // Load and draw images
   let loadedImages = 0;
   const totalImages = photos.length;
 
@@ -156,24 +171,40 @@ function downloadPhotoStrip() {
     img.onload = () => {
       loadedImages++;
 
-      let xOffset = 0;
-      let yOffset = 0;
+      // Calculate position
+      let xOffset = 12 + frameExtra.width / 2; // Start with canvas padding and adjust for frame
+      let yOffset = 12 + frameExtra.height / 2;
 
       if (currentOrientation === 'vertical') {
-        yOffset = index * (photoHeight + frameExtraHeight + padding);
+        yOffset += index * (totalPhotoHeight + padding);
       } else {
-        xOffset = index * (photoWidth + frameExtraWidth + padding);
+        xOffset += index * (totalPhotoWidth + padding);
       }
 
-      // Draw frame background if Polaroid
+      // Draw frame background (e.g., Polaroid)
       if (photo.frame === 'polaroid') {
         ctx.fillStyle = '#ffffff';
         ctx.fillRect(
-          currentOrientation === 'vertical' ? -10 : xOffset - 10,
-          currentOrientation === 'vertical' ? yOffset - 10 : -10,
+          xOffset - 10,
+          yOffset - 10,
           photoWidth + 20,
           photoHeight + 40
         );
+        // Add shadow
+        ctx.shadowColor = 'rgba(0, 0, 0, 0.2)';
+        ctx.shadowBlur = 8;
+        ctx.shadowOffsetX = 4;
+        ctx.shadowOffsetY = 4;
+        ctx.fillRect(
+          xOffset - 10,
+          yOffset - 10,
+          photoWidth + 20,
+          photoHeight + 40
+        );
+        ctx.shadowColor = 'rgba(0, 0, 0, 0)';
+        ctx.shadowBlur = 0;
+        ctx.shadowOffsetX = 0;
+        ctx.shadowOffsetY = 0;
       }
 
       // Draw the image
@@ -190,18 +221,30 @@ function downloadPhotoStrip() {
         ctx.setLineDash([5, 5]);
         ctx.strokeRect(xOffset - 1.5, yOffset - 1.5, photoWidth + 3, photoHeight + 3);
         ctx.setLineDash([]);
+      } else if (photo.frame === 'none') {
+        ctx.strokeStyle = '#d4a017';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(xOffset - 1, yOffset - 1, photoWidth + 2, photoHeight + 2);
       }
 
       // Draw text overlay after all images are loaded
       if (loadedImages === totalImages && photos.length > 0) {
-        const textY = currentOrientation === 'vertical' ? (photoHeight + frameExtraHeight) * photos.length + (photos.length - 1) * padding + padding : photoHeight + frameExtraHeight + padding;
+        const textY = currentOrientation === 'vertical'
+          ? 12 + (totalPhotoHeight + padding) * photos.length
+          : 12 + totalPhotoHeight + padding;
+
+        // Draw text background
         ctx.fillStyle = '#f8f1e9';
-        ctx.fillRect(0, textY, stripWidth, textHeight);
+        ctx.fillRect(12, textY, stripWidth - 24, textHeight);
+
+        // Draw text
         ctx.font = `${textSizeSelect.value} Caveat`;
         ctx.fillStyle = textColorPicker.value;
         ctx.textAlign = textAlignmentSelect.value;
         ctx.textBaseline = 'middle';
-        ctx.fillText(textInput.value || 'Your Text Here', stripWidth / 2, textY + textHeight / 2);
+        const textX = textAlignmentSelect.value === 'center' ? stripWidth / 2 :
+                     textAlignmentSelect.value === 'left' ? 24 : stripWidth - 24;
+        ctx.fillText(textInput.value || 'Your Text Here', textX, textY + textHeight / 2);
 
         // Download the canvas
         const link = document.createElement('a');
