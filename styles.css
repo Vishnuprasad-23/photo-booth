@@ -88,6 +88,8 @@ body {
 #photo-strip.grid-2x2, #photo-strip.grid-2x3 {
   display: grid;
   gap: 1rem; /* Matches gap-4 */
+  justify-content: center;
+  align-items: center;
   justify-items: center;
 }
 
