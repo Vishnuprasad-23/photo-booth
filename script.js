@@ -194,14 +194,40 @@ function downloadPhotoStrip() {
     }
   }
 
+  // Scale canvas for high-DPI displays
+  const pixelRatio = window.devicePixelRatio || 2;
+  const scaledStripWidth = stripWidth * pixelRatio;
+  const scaledStripHeight = stripHeight * pixelRatio;
+  const scaledPhotoWidth = photoWidth * pixelRatio;
+  const scaledPhotoHeight = photoHeight * pixelRatio;
+  const scaledPadding = padding * pixelRatio;
+  const scaledTextHeight = textHeight * pixelRatio;
+  const scaledFrameExtra = {
+    width: frameExtra.width * pixelRatio,
+    height: frameExtra.height * pixelRatio
+  };
+  const scaledTotalPhotoWidth = totalPhotoWidth * pixelRatio;
+  const scaledTotalPhotoHeight = totalPhotoHeight * pixelRatio;
+
   const stripCanvas = document.createElement('canvas');
-  stripCanvas.width = stripWidth;
-  stripCanvas.height = stripHeight;
+  stripCanvas.width = scaledStripWidth;
+  stripCanvas.height = scaledStripHeight;
   const ctx = stripCanvas.getContext('2d');
 
-  // Set background
+  // Scale the context to handle high-DPI
+  ctx.scale(pixelRatio, pixelRatio);
+
+  // Apply background color
   ctx.fillStyle = bgColorPicker.value;
   ctx.fillRect(0, 0, stripWidth, stripHeight);
+
+  // Calculate centering offset for grid layouts
+  let gridOffsetX = 0;
+  if (isGrid && cols === 2) {
+    const gridWidth = (totalPhotoWidth + padding) * cols;
+    gridOffsetX = (stripWidth - gridWidth) / 2;
+    if (gridOffsetX < 12) gridOffsetX = 12; // Ensure minimum padding
+  }
 
   // Load and draw images
   let loadedImages = 0;
@@ -215,8 +241,8 @@ function downloadPhotoStrip() {
       loadedImages++;
 
       // Calculate position
-      let xOffset = 12 + frameExtra.width / 2;
-      let yOffset = 12 + frameExtra.height / 2;
+      let xOffset = gridOffsetX + (frameExtra.width / 2);
+      let yOffset = 12 + (frameExtra.height / 2);
 
       if (isGrid) {
         const row = Math.floor(index / cols);
@@ -224,6 +250,7 @@ function downloadPhotoStrip() {
         xOffset += col * (totalPhotoWidth + padding);
         yOffset += row * (totalPhotoHeight + padding);
       } else if (currentOrientation === 'vertical') {
+        xOffset = 12 + (frameExtra.width / 2);
         yOffset += index * (totalPhotoHeight + padding);
       } else {
         xOffset += index * (totalPhotoWidth + padding);
